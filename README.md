@@ -105,7 +105,9 @@ housing-market-cluster/
 
 ## Configuration
 
-Key configuration parameters are defined in the `CONFIG` dictionary:
+Key configuration parameters are defined in the `CONFIG` dictionary.
+
+### Core Parameters
 
 ```python
 CONFIG = {
@@ -113,6 +115,24 @@ CONFIG = {
     "missing_data_threshold_percent": 0.25
 }
 ```
+
+### Parameter Details
+
+#### ```start_year```
+
+- Type: string
+- Default: "2020"
+- Description: Defines the starting year for the housing price analysis
+- Impact: Affects calculation of growth rates and time-based metrics
+- Example: Setting to "2020" will analyze data from January 2020 onwards
+
+#### ```missing_data_threshold_percent```
+
+- Type: float
+- Default: 0.25 (25%)
+- Description: Maximum allowed percentage of missing data points for a region
+- Impact: Controls data quality by filtering out regions with insufficient data
+- Example: At 0.25, if a city has more than 25% of its monthly prices missing, it is excluded from analysis
 
 ## Functions
 
