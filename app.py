@@ -3,6 +3,7 @@ import sklearn.cluster
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 warnings.filterwarnings("ignore")
+import plotly.express as px
 
 import pandas as pd
 pd.set_option('display.max_columns', None)  # Ensure all columns are displayed
@@ -32,8 +33,8 @@ CITY_HOME_VALUES = {
 }
 
 CONFIG = {
-    "start_year": "2020",
-    "missing_data_threshold_percent": 0.25
+    "start_year": "2022",
+    "missing_data_threshold_percent": 0.10
 }
 
 # Test for missing data
@@ -210,6 +211,31 @@ def plot_data(df, feature_one, feature_two, k_means_results, num_bedrooms, city_
     
     plt.show()
 
+def plot_data_plotly(df, feature_one, feature_two, k_means_results, num_bedrooms):
+    df['Cluster'] = k_means_results['labels']
+    colors = {
+        0: 'red',
+        1: 'blue',
+        2: 'green',
+        3: 'purple',
+        4: 'orange'
+    }
+    
+    fig = px.scatter(
+        df,
+        x=feature_one,
+        y=feature_two,
+        color='Cluster',
+        color_discrete_map=colors,
+        hover_data=['RegionName', 'State', 'GrowthRate', 'AveragePrice', 'Volatility'],
+        title=f"{num_bedrooms} - City Housing Markets Clustered by {feature_one} and {feature_two}"
+    )
+    fig.update_layout(
+        xaxis_title=feature_one,
+        yaxis_title=feature_two,
+    )
+    fig.show()
+    
 def prompt_user():
     """
     Prompts user to select bedroom count and visualization features.
@@ -311,7 +337,6 @@ def prompt_user():
         case "5":
             bedrooms = "ZHVI 5-Bedroom Time Series ($)"
 
-    
     return {
         "bedrooms": bedrooms,
         "features": [feature_one, feature_two]
@@ -332,12 +357,21 @@ def main():
             
             k_means_results = build_k_means_model(scaled_features)
             
-            plot_data(df=df, 
-                    feature_one=user_input["features"][0], 
-                    feature_two=user_input["features"][1], 
-                    k_means_results=k_means_results, 
-                    city_names=False,
-                    num_bedrooms=user_input["bedrooms"])   
+            # plot_data(df=df, 
+            #         feature_one=user_input["features"][0], 
+            #         feature_two=user_input["features"][1], 
+            #         k_means_results=k_means_results, 
+            #         city_names=True,
+            #         num_bedrooms=user_input["bedrooms"])  
+            
+            plot_data_plotly(
+                df=df,
+                feature_one=user_input["features"][0], 
+                feature_two=user_input["features"][1], 
+                k_means_results=k_means_results,
+                num_bedrooms=user_input["bedrooms"]
+            ) 
+            
         except Exception as e:
             print(f"An error occurred: {e}") 
     else:
